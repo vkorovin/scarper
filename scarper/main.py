@@ -2,25 +2,40 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
+def scarper(url):
 
-url='https://github.com/jborean93?tab=repositories'
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, "html.parser")
 
-page = requests.get(url)
-soup = BeautifulSoup(page.text, "html.parser")
+    main_layout = []
+    main_layout = soup.find_all('a', attrs={'itemprop':'name codeRepository'})
+    star_layout = soup.find_all('a',attrs={'href':re.compile("stargazers")})
 
-main_layout = []
-main_layout = soup.find_all('a', attrs={'itemprop':'name codeRepository'})
-star_layout = soup.find_all('a',attrs={'href':re.compile("stargazers")})
+    hrefs =[]
+    texts =[]
 
-hrefs =[]
-texts =[]
+    stars =dict()
+    for star in star_layout:
+        stars[star.attrs['href']] = int(star.text)
+
+    result = []
+    for data in main_layout:
+        item = dict()
+        item['url'] = data.attrs['href']
+        item['text'] = data.text.strip('\n').lstrip(' ')
+
+        try:
+            item['stars'] = stars[data.attrs['href']+'/stargazers']
+        except KeyError:
+            item['stars'] = 0
+
+        result.append(item)
+    return result
 
 
-for data in main_layout:
-    hrefs.append(data.attrs['href'])
-    texts.append(data.text)
-stars =dict()
-for star in star_layout:
-    stars[star.attrs['href']] =int(star.text)
-
-pass
+if __name__ ==  '__main__':
+    data = scarper(url='https://github.com/jborean93?tab=repositories')
+    print(data)
+    data = scarper(url='https://github.com/vkorovin?tab=repositories')
+    print(data)
+    pass
