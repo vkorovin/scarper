@@ -7,12 +7,8 @@ def scarper(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
 
-    main_layout = []
     main_layout = soup.find_all('a', attrs={'itemprop':'name codeRepository'})
     star_layout = soup.find_all('a',attrs={'href':re.compile("stargazers")})
-
-    hrefs =[]
-    texts =[]
 
     stars =dict()
     for star in star_layout:
@@ -37,5 +33,7 @@ if __name__ ==  '__main__':
     data = scarper(url='https://github.com/jborean93?tab=repositories')
     print(data)
     data = scarper(url='https://github.com/vkorovin?tab=repositories')
+    print(data)
+    data = scarper(url='https://github.com/vuykorovin?tab=repositories')
     print(data)
     pass
