@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import json
 
 def scarper(url):
 
@@ -26,7 +27,7 @@ def scarper(url):
             item['stars'] = 0
 
         result.append(item)
-    return result
+    return json.dumps(result)
 
 
 if __name__ ==  '__main__':
